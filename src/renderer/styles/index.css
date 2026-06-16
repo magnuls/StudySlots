@@ -1,0 +1,363 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+input {
+  user-select: text;
+}
+
+html,
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.drag {
+  -webkit-app-region: drag;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* Thick black pixel border with stepped "round" corners, white inner ring,
+   and a hard-edged glossy highlight. The border is drawn with offset
+   hard-shadow copies so the corners are true pixel steps, not smooth CSS
+   curves. */
+.pixel-border {
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    /* white inner ring + crisp gloss band */
+    inset 0 0 0 4px #fff,
+    inset 0 10px 0 rgba(255, 255, 255, 0.4),
+    /* thick black border, stepped at the corners */
+    -8px 0 0 0 #000,
+    8px 0 0 0 #000,
+    0 -8px 0 0 #000,
+    0 8px 0 0 #000,
+    -6px -6px 0 0 #000,
+    6px -6px 0 0 #000,
+    -6px 6px 0 0 #000,
+    6px 6px 0 0 #000,
+    /* depth under the border */
+    0 12px 0 rgba(0, 0, 0, 0.25);
+}
+
+/* thinner variant for small controls like text/time inputs */
+.pixel-border-thin {
+  border: none;
+  border-radius: 0;
+  box-shadow:
+    inset 0 0 0 3px #fff,
+    inset 0 6px 0 rgba(255, 255, 255, 0.35),
+    -5px 0 0 0 #000,
+    5px 0 0 0 #000,
+    0 -5px 0 0 #000,
+    0 5px 0 0 #000,
+    -3px -3px 0 0 #000,
+    3px -3px 0 0 #000,
+    -3px 3px 0 0 #000,
+    3px 3px 0 0 #000,
+    0 7px 0 rgba(0, 0, 0, 0.2);
+}
+
+.pixel-input {
+  @apply pixel-border-thin bg-cream px-3 py-2 font-pixel text-[10px] text-plum outline-none focus:bg-white;
+}
+
+/* ===== breathing pastel gradient background ===== */
+@keyframes breathe {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.bg-breathe {
+  background: linear-gradient(125deg, #ff9fd0 0%, #c2a0ff 45%, #8fe0ff 100%);
+  background-size: 300% 300%;
+  animation: breathe 14s ease-in-out infinite;
+}
+
+/* hide native number-input spinners — they overlap the value at pixel sizes */
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* ===== floating background sprites ===== */
+@keyframes bob {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(8px, -16px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.bob {
+  animation: bob 6s ease-in-out infinite;
+}
+
+/* ===== marquee chase lights ===== */
+@keyframes marquee {
+  0%,
+  49% {
+    background: #ffc83d;
+    box-shadow: 0 0 3px rgba(255, 200, 61, 0.9);
+  }
+  50%,
+  100% {
+    background: #ff5fa2;
+    box-shadow: none;
+  }
+}
+
+.marquee-dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: marquee 1.2s linear infinite;
+}
+
+/* ===== slot machine lever ===== */
+.lever-arm {
+  position: absolute;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.22s cubic-bezier(0.6, -0.3, 0.3, 1.7);
+}
+
+.lever-arm.pulled {
+  transform: translateX(-50%) translateY(44px) scaleY(0.34);
+}
+
+.lever-ball {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ff8a72;
+  border: 3px solid #000;
+  box-shadow:
+    inset 4px 4px 0 rgba(255, 255, 255, 0.55),
+    inset -3px -3px 0 rgba(0, 0, 0, 0.2);
+}
+
+.lever-stick {
+  width: 9px;
+  height: 70px;
+  background: #c9b6f5;
+  border: 2px solid #000;
+  border-top: none;
+}
+
+.lever-base {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 28px;
+  background: #ffc83d;
+  border: 4px solid #000;
+  border-radius: 10px;
+  box-shadow: inset 0 4px 0 rgba(255, 255, 255, 0.5);
+}
+
+/* ===== blinking timer colon & eyes ===== */
+@keyframes colon-blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0.15;
+  }
+}
+
+.colon-blink {
+  animation: colon-blink 1s linear infinite;
+}
+
+@keyframes eye-blink {
+  0%,
+  92%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.12);
+  }
+}
+
+.eye {
+  animation: eye-blink 4.5s ease-in-out infinite;
+}
+
+/* ===== confetti ===== */
+@keyframes confetti-fall {
+  0% {
+    transform: translateY(-12vh) rotate(0deg);
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(112vh) rotate(720deg);
+    opacity: 0.6;
+  }
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 0;
+  border: 1px solid rgba(67, 41, 74, 0.4);
+  animation: confetti-fall linear forwards;
+}
+
+/* ===== pop-in for result banner ===== */
+@keyframes pop-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  70% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.pop-in {
+  animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ===== sparkle bursts ===== */
+@keyframes sparkle-pop {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  40% {
+    transform: scale(1.4) rotate(25deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.4) rotate(60deg);
+    opacity: 0;
+  }
+}
+
+.sparkle {
+  position: absolute;
+  pointer-events: none;
+  animation: sparkle-pop 0.9s ease-out both;
+}
+
+/* ===== pixel character moods ===== */
+@keyframes char-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes char-cheer {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-18px) rotate(5deg);
+  }
+}
+
+.char-idle {
+  animation: bob 4s ease-in-out infinite;
+}
+
+.char-excited {
+  animation: char-bounce 0.4s ease-in-out infinite;
+}
+
+.char-cheer {
+  animation: char-cheer 0.5s ease-in-out infinite;
+}
+
+/* ===== reel spin blur ===== */
+.reel-spinning {
+  filter: blur(1px);
+}
+
+/* ===== idle question marks bob in the reel windows ===== */
+@keyframes qmark {
+  0%,
+  100% {
+    transform: translateY(2px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.qmark-bounce {
+  display: inline-block;
+  animation: qmark 1.1s ease-in-out infinite;
+}
+
+/* ===== shiny gold cabinet with a sweeping glint ===== */
+@keyframes sheen {
+  from {
+    background-position: 220% 0;
+  }
+  to {
+    background-position: -80% 0;
+  }
+}
+
+.gold-shine {
+  background: linear-gradient(150deg, #ffe98c 0%, #ffd24d 35%, #ffc83d 55%, #e8a614 100%);
+}
+
+.gold-shine::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    120deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.45) 47%,
+    rgba(255, 255, 255, 0.15) 53%,
+    transparent 65%
+  );
+  background-size: 250% 100%;
+  animation: sheen 4.5s linear infinite;
+}
