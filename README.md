@@ -33,45 +33,10 @@ pixel confetti.
   fully functional spin-and-study timer.
 - **Persisted preferences** — your min/max bounds are saved to `localStorage` between runs.
 
----
-
-## Tech stack
-
-| Layer          | Technology                                              |
-| -------------- | ------------------------------------------------------- |
-| Desktop shell  | [Electron](https://www.electronjs.org/) 33              |
-| UI             | [React](https://react.dev/) 18 + TypeScript             |
-| Build tooling  | [Vite](https://vite.dev/) 5                             |
-| Styling        | [Tailwind CSS](https://tailwindcss.com/) 3 + PostCSS    |
-| Audio          | [Tone.js](https://tonejs.dev/) 15                       |
-| Calendar API   | [googleapis](https://github.com/googleapis/google-api-nodejs-client) (OAuth 2.0) |
-
----
-
 ## Architecture
 
 Study Slots follows Electron's recommended **secure process model**. The renderer never touches
 Node or Electron APIs directly; everything crosses a narrow, typed bridge.
-
-```
-┌─────────────────────────────────────────────────────────────┐
-│  Main process  (src/main)                                    │
-│                                                              │
-│   main.ts          window lifecycle, IPC, main-process timer │
-│   google-auth.ts   OAuth 2.0 loopback flow + Calendar calls  │
-│                                                              │
-└───────────────▲──────────────────────────┬──────────────────┘
-                │  ipcRenderer / ipcMain     │  contextBridge
-                │  (typed channels)          │  (preload.ts)
-┌───────────────┴──────────────────────────▼──────────────────┐
-│  Renderer process  (src/renderer)                            │
-│                                                              │
-│   App.tsx          phase state machine (setup → … → done)    │
-│   hooks/           useTimer · useCalendar · useAudio         │
-│   components/      SlotMachine, Reel, Timer, Confetti, …     │
-│                                                              │
-└──────────────────────────────────────────────────────────────┘
-```
 
 **Security model.** The `BrowserWindow` is created with `contextIsolation: true` and
 `nodeIntegration: false`. `preload.ts` uses `contextBridge.exposeInMainWorld` to expose only a
@@ -104,30 +69,6 @@ Booking is built directly on `googleapis` with a desktop-friendly **loopback red
 Credentials never leave the user's machine, and the app degrades gracefully to timer-only mode
 if no credentials are configured.
 
----
-
-## Project structure
-
-```
-study-slots/
-├── src/
-│   ├── main/                  # Electron main process
-│   │   ├── main.ts            # window, IPC, background timer
-│   │   ├── google-auth.ts     # OAuth 2.0 + Calendar event creation
-│   │   └── preload.ts         # contextBridge API surface
-│   └── renderer/              # React UI
-│       ├── App.tsx            # phase state machine
-│       ├── components/        # SlotMachine, Reel, Timer, Confetti, pixel art…
-│       ├── hooks/             # useTimer · useCalendar · useAudio
-│       └── styles/
-├── index.html
-├── vite.config.ts
-├── tailwind.config.js
-├── tsconfig*.json
-└── package.json
-```
-
----
 
 ## Getting started
 
@@ -175,12 +116,12 @@ Only the `calendar.events` scope is requested, and all tokens stay on your machi
 
 ## How it works (user flow)
 
-1. **Set bounds** — choose min/max minutes (default 30–120, persisted between runs).
+1. **Set bounds** — choose min/max minutes.
 2. **Pick a subject and start time.**
-3. **Pull the lever** — the reels spin and land on a random duration in 15-minute steps.
-4. **Confirm** — optionally books the session to Google Calendar.
-5. **Study** — the machine becomes a `MM:SS` countdown; pause or finish early any time.
-6. **Jackpot** — at `00:00`, a chiptune fanfare plays and pixel confetti rains down.
+3. **Pull the lever** — the reels spin and land on a random duration.
+4. **Confirm** — if you want you can book the session to Google Calendar.
+5. **Study** — the machine becomes a `MM:SS` countdown you can pause the timer if you want.
+6. **Jackpot** — timer finishes.
 
 ---
 
