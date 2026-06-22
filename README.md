@@ -5,11 +5,9 @@
 > become your countdown timer.
 
 Study Slots turns the hardest part of studying — *just starting* — into a game. Set your
-minimum and maximum session length, pull the lever, and let chance commit you to a block of
+minimum and maximum session length, pull the lever, and let the slots commit you to a block of
 focused work. When the reels stop, the session is optionally booked to Google Calendar and
-the slot machine transforms into a live countdown timer that keeps running even when the
-window is minimized. Finish the session and you're rewarded with a chiptune fanfare and
-pixel confetti.
+the slot machine transforms into a live countdown timer. SOme confetti comes down when you're done so you're not deepressed that you've been studying for so long.
 
 ---
 
