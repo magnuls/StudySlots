@@ -1,56 +1,14 @@
 # 🎰 Study Slots
 
-> A pixel-art casino desktop app where a slot machine decides how long you study today.
-> Spin the lever, get a duration, book it to your Google Calendar, and watch the machine
+> A slot machine desktop app where the slots decide how long you study today.
+> Spin the lever, get a duration, book it to your G-Cal, and watch the machine
 > become your countdown timer.
 
 Study Slots turns the hardest part of studying — *just starting* — into a game. Set your
 minimum and maximum session length, pull the lever, and let the slots commit you to a block of
 focused work. When the reels stop, the session is optionally booked to Google Calendar and
-the slot machine transforms into a live countdown timer. SOme confetti comes down when you're done so you're not deepressed that you've been studying for so long.
-
----
-
-## Features
-
-- **Slot-machine session picker** — three independently spinning reels land left-to-right on
-  a study duration, drawn uniformly at random from the 15-minute increments inside your
-  chosen bounds.
-- **Google Calendar booking** — connect your calendar and each confirmed spin is written as a
-  `Study: {subject}` event via the Google Calendar API.
-- **Accurate background timer** — the countdown runs in the Electron **main process**, so it
-  keeps perfect time even while the window is minimized or the renderer is throttled by the OS.
-- **Pause, resume, or finish early** — full control over a running session, with the timer
-  state owned by the main process and mirrored to the UI.
-- **Procedural 8-bit audio** — every jingle, reel-stop click, win sting, and the background
-  music is generated at runtime with [Tone.js](https://tonejs.dev/). No audio files ship with
-  the app.
-- **Pixel-art presentation** — animated background, expressive pixel character, a custom
-  frameless window with a hand-drawn pixel border, and confetti on completion.
-- **Works offline** — Google Calendar is entirely optional. With no setup, Study Slots is a
-  fully functional spin-and-study timer.
-- **Persisted preferences** — your min/max bounds are saved to `localStorage` between runs.
-
-## Architecture
-
-Study Slots follows Electron's recommended **secure process model**. The renderer never touches
-Node or Electron APIs directly; everything crosses a narrow, typed bridge.
-
-**Security model.** The `BrowserWindow` is created with `contextIsolation: true` and
-`nodeIntegration: false`. `preload.ts` uses `contextBridge.exposeInMainWorld` to expose only a
-small, explicit API (`window.studySlots`) for window controls, the timer, and Google Calendar —
-nothing else from Node or Electron is reachable from the page.
-
-**Main-process timer.** Browser timers are throttled when a window is backgrounded, which would
-make a study countdown drift. To avoid this, the countdown lives in the main process
-(`setInterval` in `main.ts`) and streams `timer:tick` events to the renderer over IPC. The
-`useTimer` hook subscribes to those ticks and falls back to a local interval when running
-outside Electron (e.g. the Vite dev server in a plain browser).
-
-**State machine.** `App.tsx` drives the whole UI through a small set of phases —
-`setup → spinning → result → timer → done` — including pause-on-menu (Esc), an early-finish
-path, and a post-session celebration sequence (the reels spin to 7-7-7, then again to the
-minutes you just studied).
+the slot machine transforms into a live countdown timer. Some confetti comes down when you're 
+done so you're not deepressed that you've been studying for so long.
 
 ### Google Calendar OAuth flow
 
